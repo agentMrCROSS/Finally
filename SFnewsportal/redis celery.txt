@@ -1,0 +1,9 @@
+Для Windows
+
+проверка
+celery -A newsportal worker -l INFO --pool=solo
+
+
+Для запуска периодических задач на Windows запустите в разных окнах терминала:
+celery -A newsportal worker -l INFO --pool=solo
+celery -A newsportal beat -l INFO --pool=solo

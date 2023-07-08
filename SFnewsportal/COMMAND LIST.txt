@@ -1,0 +1,85 @@
+python manage.py shell
+from news.models import *
+
+1) Создание Пользователей
+  
+  user1 = User.objects.create_user('Pavel')
+  user2 = User.objects.create_user('Alexandra')
+
+2) Присваивание им авторство
+  
+  author1 = Author.objects.create(user=user1) 
+  author2 = Author.objects.create(user=user2) 
+
+3) Создание категорий
+  
+  category1 = Category.objects.create(name_category = ' СВО ')
+  category2 = Category.objects.create(name_category = ' Интересное ')
+  category3 = Category.objects.create(name_category = ' Погода ')
+  category4 = Category.objects.create(name_category = ' Спорт ')
+
+4) Создание постов
+  
+  article1 = Post.objects.create(author=author1,post_type='N',header='Статья про Спорт')
+  article2 = Post.objects.create(author=author2,post_type='N',header='Статья про Погоду') 
+  news1 = Post.objects.create(author=author2,post_type='A',header='Новость по ситуации на СВО')
+
+5) Добавление категорий к посту
+ 
+ article1.category.add(category1,category2)
+ article2.category.add(category2,category3)
+ news1.category.add(category4,category2)
+
+6) Создание комментариев
+  
+  comm1 = Comment.objects.create(post=article1,user=user1)
+  comm2 = Comment.objects.create(post=article1,user=user1)  
+  comm3 = Comment.objects.create(post=article2,user=user2) 
+  comm4 = Comment.objects.create(post=news1,user=user2) 
+
+7) Лайк/Дизлайк
+  comm1.like()
+  comm1.like()
+  comm1.dislike()
+  comm2.like()
+  comm2.like()
+  comm2.dislike()
+  comm3.like()
+  comm3.like()
+  comm3.dislike()
+  comm4.like()
+  comm4.like()
+  comm4.dislike()
+  article1.like()
+  article1.like()
+  article1.dislike()
+  article2.like()
+  article2.like()
+  article2.dislike()
+  news1.like()
+  news1.like()
+  news1.dislike()
+
+
+8) Обновить рейтинг 
+  
+  author1.update_rating()
+  author2.update_rating()
+
+9) Вывести пользователя и рейтинг лучшего пользователя
+  
+  best_user = Author.objects.order_by('-rating').values('user__username','rating').first()
+  best_user
+  
+10) Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+
+  best_post = Post.objects.order_by('-rating').values('create_data','author__user__username','rating','header').first()
+  
+  best_post_preview = Post.objects.order_by('-rating').first()
+  best_post_preview.preview()
+
+
+11) Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье. 
+
+   comments = Comment.objects.filter(post=best_post_preview)
+   comments

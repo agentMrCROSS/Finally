@@ -1,0 +1,63 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+Post
+{% endblock title %}
+
+{% load cache %}
+    {% cache 30 header %}
+{% endcache %}
+    {% cache 30 text_header %}
+{% endcache %}
+{% cache 30 create_data %}
+{% endcache %}
+{% block content %}
+   <h1>Весь список новостей!</h1>
+   <h3>{{ time_now|date:'M d Y' }}</h3>
+   <h3> {{ next_sale|default_if_none:"Новости и статьи публикуются каждый день!" }} </h3>
+
+   <hr>
+
+   {% if posts %}
+       <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Текст</td>
+               <td>Дата публикации</td>
+               <td>Тип поста</td>
+           </tr>
+
+           {% for posts in posts %}
+           <tr>
+               <td>{{ posts.header | censor }}</td>
+               <td>{{ posts.text_header | truncatechars:20 | censor }}</td>
+               <td>{{ posts.create_data }}</td>
+               <td>{{ posts.post_type }}</td>
+           </tr>
+           {% endfor %}
+       </table>
+   {% else %}
+       <h2>Никаких новостей нет!</h2>
+   {% endif %}
+
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endblock content %}
