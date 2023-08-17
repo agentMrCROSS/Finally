@@ -1,13 +1,15 @@
 from rest_framework import generics, viewsets
-from .models import Pass
+from .models import Pereval_added
 from .serializers import Pereval_addedSerializer, PerevalSerializer
 
 
-def submitData(request):
-    data = request.data
+# класс submitData
+class Pereval_addedAPICreate(generics.CreateAPIView):
+    queryset = Pereval_added.objects.all()
+    serializer_class = Pereval_addedSerializer
 
-    # Проверка наличия необходимых полей
-    required_fields = ['beauty_title', 'title', 'other_titles',
-                       'connect', 'add_time', 'user', 'coords', 'level', 'images']
-    if not all(field in data for field in required_fields):
-        return Response({'status': 400, 'message': 'Bad Request', 'id': None})
+
+# для проверки
+class PerevalViewSet(viewsets.ModelViewSet):
+    queryset = Pereval_added.objects.all()
+    serializer_class = PerevalSerializer
