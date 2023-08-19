@@ -1,0 +1,261 @@
+openapi: 3.0.0
+info:
+  title: Mountains API
+  version: 1.0.0
+
+paths:
+  /users:
+    get:
+      summary: Get a list of users
+      operationId: listUsers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /coordinates:
+    get:
+      summary: Get a list of coordinates
+      operationId: listCoordinates
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coordinate'
+
+  /coordinates/{id}:
+    get:
+      summary: Get a coordinate by ID
+      operationId: getCoordinateById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the coordinate
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coordinate'
+
+  /images:
+    get:
+      summary: Get a list of images
+      operationId: listImages
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Image'
+
+  /images/{id}:
+    get:
+      summary: Get an image by ID
+      operationId: getImageById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the image
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+
+  /passes:
+    get:
+      summary: Get a list of passes
+      operationId: listPasses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pass'
+
+  /passes/{id}:
+    get:
+      summary: Get a pass by ID
+      operationId: getPassById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the pass
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pass'
+  /api/submit-data/:
+    post:
+      summary: Submit data about a pass
+      operationId: submitData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pass'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pass'
+  /api/submit-data/{id}/: # Добавленная операция PATCH
+    patch: # Тип операции PATCH
+      summary: Update data about a pass
+      operationId: editData     # Идентификатор операции (если есть)
+      parameters:
+        - name: id              # Параметр пути ID
+          in: path
+          required: true
+          description: ID of the pass to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pass'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pass'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        fam:
+          type: string
+        otc:
+          type: string
+        phone:
+          type: string
+
+    Coordinate:
+      type: object
+      properties:
+        id:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        height:
+          type: integer
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+        data:
+          type: string
+        title:
+          type: string
+
+    Pass:
+      type: object
+      properties:
+        id:
+          type: integer
+        beauty_title:
+          type: string
+        title:
+          type: string
+        other_titles:
+          type: string
+        connect:
+          type: string
+        add_time:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
+        coords:
+          $ref: '#/components/schemas/Coordinate'
+        level:
+          type: object
+          properties:
+            winter:
+              type: string
+            summer:
+              type: string
+            autumn:
+              type: string
+            spring:
+              type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        status:
+          type: string
+          enum:
+            - new
+            - pending
+            - accepted
+            - rejected
