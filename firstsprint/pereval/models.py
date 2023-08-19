@@ -1,61 +1,46 @@
 from django.db import models
-from .resources import *
 
 
-class Users(models.Model):
-    email = models.EmailField(blank=True)
-    phone = models.IntegerField(blank=True)
+class User(models.Model):
+    email = models.EmailField()
+    fam = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    patronimic = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    otc = models.CharField(max_length=255)
+    phone = models.CharField(max_length=255)
 
 
-class Coords(models.Model):
+class Coordinate(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     height = models.IntegerField()
 
 
-class Photo(models.Model):
-    data = models.URLField(blank=True, null=True)
+class Image(models.Model):
+    data = models.ImageField(upload_to='images/')
     title = models.CharField(max_length=255)
-    pereval = models.ForeignKey("Pereval_added", on_delete=models.CASCADE, related_name='photos', blank=True, null=True)
 
 
-class Pereval_added(models.Model):
+class Pass(models.Model):
     beauty_title = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     other_titles = models.CharField(max_length=255)
-    connect = models.TextField()
+    connect = models.TextField(blank=True)
     add_time = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    coords = models.ForeignKey(Coordinate, on_delete=models.CASCADE)
+    level = models.JSONField(default=dict, blank=True)
+    images = models.ManyToManyField(Image)
+    status = models.CharField(max_length=255, choices=(
+        ('new', 'New'),
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected')
+    ))
 
-    winter_level = models.CharField(
-        max_length=2,
-        choices=DIFFICULTY_LEVEL,
-        default='1a',
-    )
-    autumn_level = models.CharField(
-        max_length=2,
-        choices=DIFFICULTY_LEVEL,
-        default='1a',
-    )
-    spring_level = models.CharField(
-        max_length=2,
-        choices=DIFFICULTY_LEVEL,
-        default='1a',
-    )
-    summer_level = models.CharField(
-        max_length=2,
-        choices=DIFFICULTY_LEVEL,
-        default='1a',
-    )
-
-    status = models.CharField(
-        max_length=8,
-        choices=STATUS,
-        default='NE',
-    )
-
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    coords = models.OneToOneField(Coords, on_delete=models.CASCADE, default=None)
-
+    def create_pass(self, pass_data):
+        # Создание новой записи перевала
+        pass_object = self.create(**pass_data)
+        # Установка значения поля status в "new"
+        pass_object.status = "new"
+        pass_object.save()
+        return pass_object
