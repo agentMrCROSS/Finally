@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import Pereval_added
+from .models import Pass
 
-admin.site.register(Pereval_added)
+admin.site.register(Pass)
+
